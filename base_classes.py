@@ -8,12 +8,13 @@ class User():
         self.weight = weight
         self.height = height
         
-class Skill():
-    def __init__(self, name, manufacturer, proficiency, stiffness, length, width):
+class Ski():
+    def __init__(self, name, manufacturer, proficiency, stiffness, length, width, ski_number):
         self.name = name
         self.manufacturer = manufacturer
         self.proficiency = proficiency
         self.stiffness = stiffness
         self.length = length
         self.width = width
+        self.ski_number = ski_number
     
