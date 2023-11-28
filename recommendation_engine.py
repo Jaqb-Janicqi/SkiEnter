@@ -98,6 +98,14 @@ class Engine():
             if (ski.stiffness, ski.width, ski.length, proficiency) in parameter_combinations:
                 preliminary_recommendation.append(ski)
         return preliminary_recommendation
+    
+    def normalized_ski_score(self, stiffness_1, stiffness_2, width_1, width_2, length_1, length_2):
+        """Returns a score between 0 and 1 indicating how similar two skis are."""
+
+        stiffness_score = 1 - abs(stiffness_1 - stiffness_2) / 4
+        width_score = 1 - abs(width_1 - width_2) / 45
+        length_score = 1 - abs(length_1 - length_2) / 50
+        return (stiffness_score + width_score + length_score) / 3
 
     def generate_recommendation(self, user: User, ski_preference: SkiPreference):
         """Generates a recommendation based on the user's profile and the skis in the database."""
@@ -144,7 +152,10 @@ class Engine():
         # sort the preliminary recommendation by similarity to the user's profile
         recommendation = sorted(
             preliminary_recommendation,
-            key=lambda ski: abs(ski.stiffness - stiffness_class) + abs(ski.width - width) + abs(ski.length - user.ski_length))
+            key=lambda ski: self.normalized_ski_score(
+                ski.stiffness, stiffness_class, ski.width, width, ski.length, user.ski_length),
+            reverse=True
+        )
         return recommendation
 
     def display_recommendation(self, recommendation: List[Ski]):
