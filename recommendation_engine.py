@@ -52,6 +52,7 @@ def sample_skis():
     skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 200, 62, 42))
     return skis
 
+
 def get_skis(sample=False):
     """Returns a list of all skis in the database."""
 
@@ -74,6 +75,8 @@ class Engine():
     def __init__(self):
         self.skis: List[Ski] = get_skis()
         self.proficiencies = ["beginner", "intermediate", "advanced", "expert"]
+        self.stiffness_classes = ["very soft",
+                                  "soft", "medium", "stiff", "very stiff"]
 
     def filter_skis(self, stiffness: List[int], width: List[int], length: List[int], proficiency: List[str]):
         """Returns a list of skis that match the given parameters."""
@@ -129,9 +132,6 @@ class Engine():
         while len(preliminary_recommendation) == 0:
             preliminary_recommendation = self.filter_skis(
                 stiffness_range, width_range, length_range, [proficiency])
-            length = [
-                ski_len for ski_len in range(int(user.ski_length - 5), int(user.ski_length + 5))
-            ]
             if len(preliminary_recommendation) == 0:
                 proficiency -= 1
                 if proficiency < 0:
@@ -142,3 +142,15 @@ class Engine():
             preliminary_recommendation,
             key=lambda ski: abs(ski.stiffness - stiffness_class) + abs(ski.width - width) + abs(ski.length - user.ski_length))
         return recommendation
+
+    def display_recommendation(self, recommendation: List[Ski]):
+        """Displays the recommendation in a user-friendly way."""
+
+        for ski in recommendation:
+            out_str = ''
+            out_str += f"{ski.manufacturer} "
+            out_str += f"{ski.name} "
+            out_str += f"length: {ski.length}cm "
+            out_str += f"width: {ski.width}mm "
+            out_str += f"stiffness: {self.stiffness_classes[ski.stiffness - 1]}"
+            print(out_str)
