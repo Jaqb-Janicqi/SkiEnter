@@ -28,7 +28,7 @@ def sample_skis():
     c = conn.cursor()
     c.execute(
         """
-        DELETE FROM skis;
+        DELETE * FROM skis;
         """
     )
     conn.commit()
