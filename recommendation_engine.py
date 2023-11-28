@@ -117,21 +117,21 @@ class Engine():
 
         # Adjust stiffness and width based on user's bmi
         if user.bmi < 18.5:
-            width -= 2
-            stiffness_class -= 1
+            width - max(1, width - 5)
+            stiffness_class = max(1, stiffness_class - 1)
         elif user.bmi > 25:
-            stiffness_class += 1
+            stiffness_class = min(5, stiffness_class + 1)
         elif user.bmi > 30:
-            width += 2
-            stiffness_class += 2
+            width = min(95, width + 5)
+            stiffness_class = min(5, stiffness_class + 1)
 
         # Adjust stiffness and width based on user's weight
         if weight < 60:
-            width -= 1
-            stiffness_class -= 1
+            width = min(50, width - 5)
+            stiffness_class = max(1, stiffness_class - 1)
         elif weight > 100:
-            width += 1
-            stiffness_class += 1
+            width = min(95, width + 5)
+            stiffness_class = min(5, stiffness_class + 1)
 
         # extend the parameters to include adjacent classes
         stiffness_range = [stiffness_class - 1,

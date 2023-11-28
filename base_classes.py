@@ -11,7 +11,7 @@ class User():
 
     @property
     def bmi(self):
-        return self.weight / (self.height ** 2)
+        return self.weight / (self.height / 100) ** 2
 
     @property
     def ski_length(self):
