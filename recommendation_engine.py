@@ -5,69 +5,73 @@ import sqlite3
 
 
 def sample_skis():
+    brand_ski_tuples = [
+        ("Atomic", "Redster S9"),
+        ("Rossignol", "Attraxion"),
+        ("Rossignol", "Forza 20D"),
+        ("Fisher", "MCK Sport"),
+        ("Fisher", "MCK Casual")
+    ]
+    stiffness = [1, 2, 3, 4, 5]
+    width = [50, 55, 60, 65, 70, 75, 80, 85, 90, 95]
+    length = [150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200]
+    proficiency = ["beginner", "intermediate", "advanced", "expert"]
+    parameter_combinations = list(itertools.product(
+        stiffness, width, length, proficiency))
     skis = []
-    skis.append(Ski("Redster S9", "Atomic", "expert", 1, 150, 58, 0))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 155, 58, 0))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 160, 58, 1))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 165, 58, 2))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 170, 58, 3))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 175, 58, 4))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 180, 58, 5))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 185, 58, 6))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 190, 58, 7))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 195, 58, 8))
-    skis.append(Ski("Redster S9", "Atomic", "expert", 3, 200, 58, 9))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 150, 68, 10))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 155, 68, 11))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 160, 68, 12))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 165, 68, 13))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 170, 68, 14))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 175, 68, 15))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 180, 68, 16))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 185, 68, 17))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 190, 68, 18))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 195, 68, 19))
-    skis.append(Ski("Attraxion", "Rossignol", "expert", 3, 200, 68, 20))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 150, 64, 21))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 155, 64, 22))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 160, 64, 23))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 165, 64, 24))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 170, 64, 25))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 175, 64, 26))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 180, 64, 27))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 185, 64, 28))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 190, 64, 29))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 195, 64, 30))
-    skis.append(Ski("Forza 20D", "Rossignol", "expert", 3, 200, 64, 31))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 150, 62, 32))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 155, 62, 33))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 160, 62, 34))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 165, 62, 35))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 170, 62, 36))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 175, 62, 37))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 180, 62, 38))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 185, 62, 39))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 190, 62, 40))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 195, 62, 41))
-    skis.append(Ski("MCK Sport", "Fisher", "expert", 3, 200, 62, 42))
+    for brand, name in brand_ski_tuples:
+        for stiffness, width, length, proficiency in parameter_combinations:
+            skis.append(Ski(name, brand, proficiency,
+                            stiffness, length, width, 0))
+    # clear all skis from the database
+    conn = sqlite3.connect('SkiEnter_database.db')
+    c = conn.cursor()
+    c.execute(
+        """
+        DELETE FROM skis;
+        """
+    )
+    conn.commit()
+
+    # add all skis to the database
+    for ski in skis:
+        c.execute(
+            """
+            INSERT INTO skis (name, manufacturer, proficiency, stiffness, length, width)
+            VALUES (?, ?, ?, ?, ?, ?);
+            """,
+            (ski.name, ski.manufacturer, ski.proficiency,
+             ski.stiffness, ski.length, ski.width)
+        )
+    conn.commit()
+
+    c.execute(
+        """ 
+        select count(*) from skis;
+        """
+    )
+    print(c.fetchall())
     return skis
 
 
-def get_skis(sample=False):
+def get_skis():
     """Returns a list of all skis in the database."""
 
-    if sample:
-        return sample_skis()
-
-    conn = sqlite3.connect('ski.db')
+    conn = sqlite3.connect('SkiEnter_database.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM skis")
+    c.execute(
+        """
+        SELECT DISTINCT name, manufacturer, proficiency, stiffness, length, width, ski_number FROM Skis
+        JOIN Skis_item as item ON item.ski_ID = Skis.ski_number
+        WHERE is_available = 1;
+        """
+    )
     tmp = c.fetchall()
     conn.close()
     skis = []
     for ski in tmp:
-        skis.append(Ski(ski[1], ski[2], ski[3],
-                    ski[4], ski[5], ski[6], ski[7]))
+        skis.append(Ski(ski[0], ski[1], ski[2],
+                    ski[3], ski[4], ski[5], ski[6]))
     return skis
 
 
@@ -124,9 +128,9 @@ class Engine():
         # extend the parameters to include adjacent classes
         stiffness_range = [stiffness_class - 1,
                            stiffness_class, stiffness_class + 1]
-        width_range = [_ for _ in range(int(width - 5), int(width + 5))]
+        width_range = [_ for _ in range(int(width - 10), int(width + 10))]
         length_range = [_ for _ in range(
-            int(user.ski_length - 5), int(user.ski_length + 5))]
+            int(user.ski_length - 10), int(user.ski_length + 10))]
         # generate a preliminary recommendation
         preliminary_recommendation = []
         while len(preliminary_recommendation) == 0:
@@ -154,3 +158,11 @@ class Engine():
             out_str += f"width: {ski.width}mm "
             out_str += f"stiffness: {self.stiffness_classes[ski.stiffness - 1]}"
             print(out_str)
+
+
+if __name__ == "__main__":
+    engine = Engine()
+    user = User("John", "Doe", 25, " ", " ", 80, 180, "advanced")
+    ski_preference = SkiPreference(user, 3, 90)
+    recommendation = engine.generate_recommendation(user, ski_preference)
+    engine.display_recommendation(recommendation)
