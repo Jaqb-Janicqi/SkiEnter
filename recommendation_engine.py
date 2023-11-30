@@ -22,7 +22,7 @@ def sample_skis():
     for brand, name in brand_ski_tuples:
         for stiffness, width, length, proficiency in parameter_combinations:
             skis.append(Ski(name, brand, proficiency,
-                            stiffness, length, width, 0))
+                        stiffness, length, width, 0))
     # clear all skis from the database
     conn = sqlite3.connect('SkiEnter_database.db')
     c = conn.cursor()
@@ -98,7 +98,7 @@ class Engine():
             if (ski.stiffness, ski.width, ski.length, proficiency) in parameter_combinations:
                 preliminary_recommendation.append(ski)
         return preliminary_recommendation
-    
+
     def normalized_ski_score(self, stiffness_1, stiffness_2, width_1, width_2, length_1, length_2):
         """Returns a score between 0 and 1 indicating how similar two skis are."""
 
@@ -158,17 +158,43 @@ class Engine():
         )
         return recommendation
 
-    def display_recommendation(self, recommendation: List[Ski]):
+    def display_recommendation(self, recommendation: List[Ski], max_count: int):
         """Displays the recommendation in a user-friendly way."""
 
-        for ski in recommendation:
+        for ski in recommendation[:max_count]:
             out_str = ''
             out_str += f"{ski.manufacturer} "
             out_str += f"{ski.name} "
-            out_str += f"length: {ski.length}cm "
-            out_str += f"width: {ski.width}mm "
-            out_str += f"stiffness: {self.stiffness_classes[ski.stiffness - 1]}"
+            out_str += f"length:{ski.length}cm "
+            out_str += f"width:{ski.width}mm "
+            out_str += f"stiffness:{self.stiffness_classes[ski.stiffness - 1]} "
+            out_str += f"proficiency:{ski.proficiency} "
+            out_str += f"ski number:{ski.ski_number}"
             print(out_str)
+
+    def select_ski(self, user: User, ski_item: Ski):
+        """Selects a ski for the user to rent."""
+
+        conn = sqlite3.connect('SkiEnter_database.db')
+        c = conn.cursor()
+        c.execute(
+            """
+            UPDATE Skis_item
+            SET is_available = 0
+            WHERE ski_ID = ?;
+            """,
+            (ski_item.ski_number,)
+        )
+        conn.commit()
+        c.execute(
+            """
+            INSERT INTO Rentals (ski_ID, user_ID)
+            VALUES (?, ?);
+            """,
+            (ski_item.ski_number, user.id)
+        )
+        conn.commit()
+        conn.close()
 
 
 if __name__ == "__main__":
@@ -176,4 +202,4 @@ if __name__ == "__main__":
     user = User("John", "Doe", 25, " ", " ", 80, 180, "advanced")
     ski_preference = SkiPreference(user, 3, 90)
     recommendation = engine.generate_recommendation(user, ski_preference)
-    engine.display_recommendation(recommendation)
+    engine.display_recommendation(recommendation, 10)
