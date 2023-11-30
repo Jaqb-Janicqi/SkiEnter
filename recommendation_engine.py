@@ -107,7 +107,7 @@ class Engine():
         length_score = 1 - abs(length_1 - length_2) / 50
         return (stiffness_score + width_score + length_score) / 3
 
-    def generate_recommendation(self, user: User, ski_preference: SkiPreference):
+    def generate_recommendation(self, user: User, ski_preference: SkiPreference, max_count: int):
         """Generates a recommendation based on the user's profile and the skis in the database."""
 
         stiffness_class = ski_preference.stiffness
@@ -162,7 +162,7 @@ class Engine():
                 ski.stiffness, stiffness_class, ski.width, width, ski.length, user.ski_length),
             reverse=True
         )
-        return recommendation
+        return recommendation[:max_count]
 
     def display_recommendation(self, recommendation: List[Ski], max_count: int):
         """Displays the recommendation in a user-friendly way."""
