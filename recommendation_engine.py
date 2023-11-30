@@ -142,8 +142,8 @@ class Engine():
 
         # remove out of bounds values
         stiffness_range = [x for x in stiffness_range if x > 0 and x < 6]
-        width_range = [x for x in width_range if x > 49 and x < 96]
-        length_range = [x for x in length_range if x > 149 and x < 201]
+        width_range = [x for x in width_range if x > 0 and x < 100]
+        length_range = [x for x in length_range if x > 0 and x < 201]
 
         # generate a preliminary recommendation
         preliminary_recommendation = []
