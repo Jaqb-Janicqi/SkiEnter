@@ -82,3 +82,4 @@ submitbutton = ttk.Button(frame_content, text='Submit', command=submit).grid(row
 clearbutton = ttk.Button(frame_content, text='Clear', command=clear).grid(row=4, column=1, sticky='w')
 
 root.mainloop()
+#jhajajha
