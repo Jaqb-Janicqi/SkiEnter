@@ -164,10 +164,10 @@ class Engine():
         )
         return recommendation[:max_count]
 
-    def display_recommendation(self, recommendation: List[Ski], max_count: int):
+    def display_recommendation(self, recommendation: List[Ski]):
         """Displays the recommendation in a user-friendly way."""
 
-        for ski in recommendation[:max_count]:
+        for ski in recommendation:
             out_str = ''
             out_str += f"{ski.manufacturer} "
             out_str += f"{ski.name} "
@@ -175,7 +175,7 @@ class Engine():
             out_str += f"width:{ski.width}mm "
             out_str += f"stiffness:{self.stiffness_classes[ski.stiffness - 1]} "
             out_str += f"proficiency:{ski.proficiency} "
-            out_str += f"ski number:{ski.ski_number}"
+            out_str += f"ski_number:{ski.ski_number}"
             print(out_str)
 
     def select_ski(self, user: User, ski_item: Ski):
@@ -207,5 +207,5 @@ if __name__ == "__main__":
     engine = Engine()
     user = User("John", "Doe", 25, " ", " ", 80, 180, "advanced")
     ski_preference = SkiPreference(user, 3, 90)
-    recommendation = engine.generate_recommendation(user, ski_preference)
-    engine.display_recommendation(recommendation, 10)
+    recommendation = engine.generate_recommendation(user, ski_preference, 10)
+    engine.display_recommendation(recommendation)
