@@ -32,6 +32,8 @@ def sample_skis():
         """
     )
     conn.commit()
+    # xd
+
 
     # add all skis to the database
     for ski in skis:
