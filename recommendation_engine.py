@@ -33,6 +33,7 @@ def sample_skis():
     )
     conn.commit()
     # xd
+    # test comment
 
 
     # add all skis to the database
