@@ -34,3 +34,6 @@ class Ski():
         self.length = length
         self.width = width
         self.ski_number = ski_number
+
+
+#xdddd
