@@ -111,7 +111,10 @@ def open_favorites():
     else:
         favorite_skis_names = [ski[1] for ski in favorite_skis]
         favorite_skis_manuf = [ski[2] for ski in favorite_skis]
-        favorites_message = 'Favorite skis: ' + ' , ' + (favorite_skis_names) + ' , ' +(favorite_skis_manuf)
+        # favorites_message = 'Favorite skis: ' + ' , ' + (favorite_skis_names) + ' , ' +(favorite_skis_manuf)
+        favorites_message = ''
+        for ski, manuf in zip(favorite_skis_names, favorite_skis_manuf):
+            favorites_message += ski + ' , ' + manuf + '\n'
         messagebox.showinfo(title='Favorites', message=favorites_message)
 
 
