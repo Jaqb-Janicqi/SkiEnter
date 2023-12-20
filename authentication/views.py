@@ -1,8 +1,10 @@
+from telnetlib import LOGOUT
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+import sqlite3
 
 
 # from django.core.mail import EmailMessage, send_mail
@@ -28,19 +30,21 @@ def signup(request):
         pnumber = request.POST['pnumber']
         email= request.POST['email']
         bdate= request.POST['bdate']
-        profi= request.POST['fnaprofime']
+        profi= request.POST['profi']
         passw1= request.POST['passw1']
         passw2= request.POST['passw2']
 
-        #TO THE DATABASE!!!! CURRENTLY USES DJANGO
-        myuser = User.object.create_user(username, email, passw1)
-        myuser.first_name=fname
-        myuser.last_name=sname
-        myuser.phone_number=pnumber
-        myuser.birth_date=bdate
-        myuser.proficiency=profi
-        
-        myuser.save()
+        conn = sqlite3.connect('SkiEnter_database.db')
+        c = conn.cursor()
+        c.execute(
+            """
+            INSERT INTO user (name, surname ,phone_number,email,login, password,date_of_birth,proficiency)
+            VALUES (?, ?, ?, ?, ?, ?,?,?);
+            """,
+            (fname, sname, pnumber,
+             email, username,passw1,bdate,profi)
+        )
+        conn.commit()
         messages.success(request, "Your account has been successfully created")
 
         return redirect('signin')
@@ -67,7 +71,11 @@ def signin(request):
 
     return render(request, "authentification\signin.html")
 
+# def update(request):
+#     return render(request, "authentification\update.html")
 
 def signout(request):
+    logout(request)
+    messages.success(request, "Logged out successgully")
+    return redirect("home")
     
-    pass
