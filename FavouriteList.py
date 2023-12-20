@@ -94,8 +94,7 @@ def save_to_favorites():
             db.commit()
             messagebox.showinfo(title='Save to Favorites', message='Ski saved to favorites')
         else:
-            #messagebox.showinfo(title='Error', message='Selected ski not found in the available skis list')
-            messagebox.showinfo(title='Error', message='Fuck iuuuuuuuu')
+            messagebox.showinfo(title='Error', message='Selected ski not found in the available skis list')
 
 def open_favorites():
     cursor.execute(
@@ -112,7 +111,7 @@ def open_favorites():
     else:
         favorite_skis_names = [ski[1] for ski in favorite_skis]
         favorite_skis_manuf = [ski[2] for ski in favorite_skis]
-        favorites_message = 'Favorite skis: ' + ', '.join(favorite_skis_names) + ', '.join(favorite_skis_manuf)
+        favorites_message = 'Favorite skis: ' + ' , ' + (favorite_skis_names) + ' , ' +(favorite_skis_manuf)
         messagebox.showinfo(title='Favorites', message=favorites_message)
 
 
