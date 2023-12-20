@@ -97,14 +97,20 @@ def save_to_favorites():
             #messagebox.showinfo(title='Error', message='Selected ski not found in the available skis list')
             messagebox.showinfo(title='Error', message='Fuck iuuuuuuuu')
 
-def open_favorites(profile_id):
-    cursor.execute("SELECT s.profile_id FROM preference_on po JOIN available_skis s ON po.ski_id = s.id WHERE po.profile_id = ?", (profile_id,))
+def open_favorites():
+    cursor.execute(
+        f"""
+        select *
+        from skis
+        join preference_on on preference_on.ski_id = skis.ski_number
+        where profile_id = {profile_id};
+        """)
     favorite_skis = cursor.fetchall()
 
     if not favorite_skis:
         messagebox.showinfo(title='Favorites', message='No favorite skis yet')
     else:
-        favorite_skis_names = [ski[0] for ski in favorite_skis]
+        favorite_skis_names = [ski[1] for ski in favorite_skis]
         favorites_message = 'Favorite skis: ' + ', '.join(favorite_skis_names)
         messagebox.showinfo(title='Favorites', message=favorites_message)
 
