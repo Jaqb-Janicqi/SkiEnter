@@ -113,7 +113,14 @@ class Engine():
         stiffness_class = ski_preference.stiffness
         width = ski_preference.width
         weight = user.weight
-        proficiency = self.proficiencies.index(user.proficiency)
+        if type(user.proficiency) == str:
+            proficiency = self.proficiencies.index(user.proficiency)
+        else:
+            proficiency = user.proficiency
+            if proficiency < 0:
+                return []
+            if proficiency > 3:
+                proficiency = 3
 
         # Adjust stiffness and width based on user's bmi
         if user.bmi < 18.5:
