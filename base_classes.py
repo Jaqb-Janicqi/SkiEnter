@@ -36,4 +36,4 @@ class Ski():
         self.ski_number = ski_number
 
     def __str__(self) -> str:
-        return f"{self.manufacturer} {self.name} {self.length}cm {self.width}mm {self.stiffness}"
+        return f"{self.manufacturer} {self.name} {self.length}cm {self.width}mm {self.stiffness} proficiency:{self.proficiency}"
