@@ -5,23 +5,28 @@ from django.contrib.auth import authenticate, login, logout
 import sqlite3
 from django.contrib.auth.decorators import login_required
 
+from base_classes import SkiPreference, User
+from recommendation_engine import Engine
+
 # Create your views here.
+
+
 def home(request):
     return render(request, "authentification\index.html")
 
 
 def signup(request):
 
-    if request.method =="POST":
+    if request.method == "POST":
         username = request.POST.get('username')
         fname = request.POST['fname']
         sname = request.POST['sname']
         pnumber = request.POST['pnumber']
-        email= request.POST['email']
-        bdate= request.POST['bdate']
-        profi= request.POST['profi']
-        passw1= request.POST['passw1']
-        passw2= request.POST['passw2']
+        email = request.POST['email']
+        bdate = request.POST['bdate']
+        profi = request.POST['profi']
+        passw1 = request.POST['passw1']
+        passw2 = request.POST['passw2']
 
         if passw1 != passw2:
             messages.error(request, "Password didn't match")
@@ -34,14 +39,15 @@ def signup(request):
             VALUES (?, ?, ?, ?, ?, ?,?,?);
             """,
             (fname, sname, pnumber,
-             email, username,passw1,bdate,profi)
+             email, username, passw1, bdate, profi)
         )
         conn.commit()
         messages.success(request, "Your account has been successfully created")
 
         return redirect('signin')
-        
+
     return render(request, "authentification\signup.html")
+
 
 def signin(request):
     if request.method == "POST":
@@ -58,7 +64,7 @@ def signin(request):
             """,
             (username, passw1)
         )
-        
+
         # Fetch the first matching user
         user = cursor.fetchone()
 
@@ -67,7 +73,7 @@ def signin(request):
         if user is not None:
             # User exists, perform login operation
             # Extract information about the user if needed
-            fname = user[5]  
+            fname = user[5]
 
             # Store user information in the session
             request.session['user_fname'] = fname
@@ -102,7 +108,7 @@ def success(request):
     #     """,
     #     (username)
     # )
-    
+
     # # Fetch the first matching user
     # userid = cursor.fetchone()[0]
     # cursor.execute(
@@ -117,8 +123,10 @@ def success(request):
     # conn.close()
     return render(request, "authentification\success.html")
 
+
 def fav(request):
     return redirect("fav")
+
 
 def lease(request):
     if request.method == "POST":
@@ -127,7 +135,26 @@ def lease(request):
         stiffness = request.POST['stiffness']
         width = request.POST['width']
 
-        
+    conn = sqlite3.connect('SkiEnter_database.db')
+    cursor = conn.cursor()
+    user_data = cursor.execute(
+        """
+        SELECT * FROM user WHERE login = ? ;
+        """,
+        (request.session['email'])
+    )
+    conn.close()
+    user = User(user_data[1], user_data[2], 0, 'tmp',
+                'tmp', weight, height, user_data[8])
+    ski_preference = SkiPreference(user, stiffness, width)
+    recommendation_engine = Engine()
+    skis = recommendation_engine.generate_recommendation(
+        user, ski_preference, 10)
+
+    # select the skis here
+
+    # lease the skis ###### change skis 0 to selected skis
+    recommendation_engine.select_ski(user, skis[0])
 
     # Render the form page if it's a GET request
-    return render(request, "authentification/lease.html", {'weight': weight, 'height': height, 'stiffness':stiffness, 'width':width})
+    return render(request, "authentification/lease.html", {'weight': weight, 'height': height, 'stiffness': stiffness, 'width': width})
