@@ -34,3 +34,6 @@ class Ski():
         self.length = length
         self.width = width
         self.ski_number = ski_number
+
+    def __str__(self) -> str:
+        return f"{self.manufacturer} {self.name} {self.length}cm {self.width}mm {self.stiffness}"
