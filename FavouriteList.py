@@ -111,7 +111,8 @@ def open_favorites():
         messagebox.showinfo(title='Favorites', message='No favorite skis yet')
     else:
         favorite_skis_names = [ski[1] for ski in favorite_skis]
-        favorites_message = 'Favorite skis: ' + ', '.join(favorite_skis_names)
+        favorite_skis_manuf = [ski[2] for ski in favorite_skis]
+        favorites_message = 'Favorite skis: ' + ', '.join(favorite_skis_names) + ', '.join(favorite_skis_manuf)
         messagebox.showinfo(title='Favorites', message=favorites_message)
 
 
