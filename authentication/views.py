@@ -74,59 +74,13 @@ def signin(request):
 
             # Redirect to the home page or wherever you want
             return render(request, "authentification\success.html", {'fname': fname})
+
         else:
             # User does not exist or credentials are incorrect
             messages.error(request, "Bad credentials!")
             return redirect('home')
 
     return render(request, "authentification\signin.html")
-
-# def signin(request):
-    
-#     if request.method == "POST":
-#         username = request.POST['username']
-#         passw1 = request.POST['passw1']
-
-#         conn = sqlite3.connect('SkiEnter_database.db')
-#         c = conn.cursor()
-#         c.execute(
-#             """
-#             SELECT * FROM user WHERE login=? 
-#             """,(username,)
-#         )
-#         conn.commit()
-#         user=c.fetchall()
-
-#         messages.success(request, "Logged out successgully")
-
-#         if  len(user) != 0:
-#              #check / or \
-#              return render(request, "authentification\index.html", {'fname': user[0][5]} )
-#         else:
-#              messages.success(request, "Bad creentials!")
-
-#              return redirect('home')    
-        
-
-#     return render(request, "authentification\signin.html")
-
-# def signin(request):
-    
-#     if request.method == "POST":
-#         username = request.POST['username']
-#         passw1 = request.POST['passw1']
-
-#         user = authenticate(username= username, password=passw1)
-
-#         if user is not None:
-#             login(request, user)
-#             #check / or \
-#             return render(request, "authentication\index.html", {'fname': fname} )
-#         else:
-#             messages.error(request, "Bad creentials!")
-#             return redirect('home')
-
-#     return render(request, "authentification\signin.html")
 
 
 def signout(request):
@@ -136,4 +90,44 @@ def signout(request):
 
 
 def success(request):
+    # username = request.POST('username')
+    # #connect to the db
+    # conn = sqlite3.connect('SkiEnter_database.db')
+    # cursor = conn.cursor()
+
+    # # Use fetchone() instead of fetchall()
+    # cursor.execute(
+    #     """
+    #     SELECT * FROM user WHERE login = ? ;
+    #     """,
+    #     (username)
+    # )
+    
+    # # Fetch the first matching user
+    # userid = cursor.fetchone()[0]
+    # cursor.execute(
+    #     f"""
+    #     select *
+    #     from skis
+    #     join preference_on on preference_on.ski_id = skis.ski_number
+    #     where profile_id = {userid};
+    #     """)
+    # favorite_skis = cursor.fetchall()
+
+    # conn.close()
     return render(request, "authentification\success.html")
+
+def fav(request):
+    return redirect("fav")
+
+def lease(request):
+    if request.method == "POST":
+        weight = request.POST['weight']
+        height = request.POST['height']
+        stiffness = request.POST['stiffness']
+        width = request.POST['width']
+
+        
+
+    # Render the form page if it's a GET request
+    return render(request, "authentification/lease.html", {'weight': weight, 'height': height, 'stiffness':stiffness, 'width':width})
