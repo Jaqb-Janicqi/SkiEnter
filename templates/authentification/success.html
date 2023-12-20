@@ -19,6 +19,10 @@
         <form action="/lease" method="post">
             {% csrf_token %}
 
+            <label for="">Username</label>
+            <input type="hidden" id="fname" name="fname" value="{{ fname }}">
+            <br>
+
             <label for="">Weight</label>
             <input type="number" id="weight" name="weight" placeholder="Enter your weight" Required>
             <br>

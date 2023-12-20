@@ -7,13 +7,45 @@
         <meta name="discription" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="">
-        <title>Logged in Page</title>
+        <title>Lease Page</title>
     </head>
     <body>
 
 
-        <h3>Leased skiis {{ weight }}, {{ height }}, {{ stiffness }}, {{ width }}</h3>
+        <h3>Leased skiis for {{ weight }}, {{ height }}, {{ stiffness }}, {{ width }}</h3>
      
+        <table>
+            <thead>
+                <tr>
+                    <th>Ski Model</th>
+                    <th>Stiffness</th>
+                    <th>Width</th>
+                    <th>Choose</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ski in skis %}
+                    <tr>
+                        <td>{{ ski.model }}</td>
+                        <td>{{ ski.stiffness }}</td>
+                        <td>{{ ski.width }}</td>
+                        <td>
+                            <form action="/rent_ski" method="post">
+                                {% csrf_token %}
+                                <!-- IT DOESNOT SEND USER ID AND SKI ID WHY? -->
+                                <input type="hidden" name="chosen_ski_id" value="{{ ski.id }}">
+                                <button type="submit">Choose</button>
+
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <input type="hidden" name="ski_id" value="{{ ski.id }}">
+                                <button type="submit">Rent</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         
         <button type="submit"><a href="/signout">Sign Out</a></button> 
         

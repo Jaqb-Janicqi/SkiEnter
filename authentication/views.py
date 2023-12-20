@@ -64,21 +64,12 @@ def signin(request):
             """,
             (username, passw1)
         )
-
-        # Fetch the first matching user
         user = cursor.fetchone()
-
         conn.close()
 
         if user is not None:
-            # User exists, perform login operation
-            # Extract information about the user if needed
             fname = user[5]
-
-            # Store user information in the session
             request.session['user_fname'] = fname
-
-            # Redirect to the home page or wherever you want
             return render(request, "authentification\success.html", {'fname': fname})
 
         else:
@@ -96,31 +87,6 @@ def signout(request):
 
 
 def success(request):
-    # username = request.POST('username')
-    # #connect to the db
-    # conn = sqlite3.connect('SkiEnter_database.db')
-    # cursor = conn.cursor()
-
-    # # Use fetchone() instead of fetchall()
-    # cursor.execute(
-    #     """
-    #     SELECT * FROM user WHERE login = ? ;
-    #     """,
-    #     (username)
-    # )
-
-    # # Fetch the first matching user
-    # userid = cursor.fetchone()[0]
-    # cursor.execute(
-    #     f"""
-    #     select *
-    #     from skis
-    #     join preference_on on preference_on.ski_id = skis.ski_number
-    #     where profile_id = {userid};
-    #     """)
-    # favorite_skis = cursor.fetchall()
-
-    # conn.close()
     return render(request, "authentification\success.html")
 
 
@@ -134,27 +100,40 @@ def lease(request):
         height = request.POST['height']
         stiffness = request.POST['stiffness']
         width = request.POST['width']
+        fname=request.POST['fname']
 
-    conn = sqlite3.connect('SkiEnter_database.db')
-    cursor = conn.cursor()
-    user_data = cursor.execute(
-        """
-        SELECT * FROM user WHERE login = ? ;
-        """,
-        (request.session['email'])
-    )
-    conn.close()
-    user = User(user_data[1], user_data[2], 0, 'tmp',
-                'tmp', weight, height, user_data[8])
-    ski_preference = SkiPreference(user, stiffness, width)
-    recommendation_engine = Engine()
-    skis = recommendation_engine.generate_recommendation(
-        user, ski_preference, 10)
+        request.session['user_fname'] = fname
 
-    # select the skis here
+        conn = sqlite3.connect('SkiEnter_database.db')
+        cursor = conn.cursor()
 
-    # lease the skis ###### change skis 0 to selected skis
-    recommendation_engine.select_ski(user, skis[0])
+        cursor.execute(
+            """
+            SELECT * FROM user WHERE login = ? ;
+            """, (request.session['user_fname'],)
+        )
+        user_data = cursor.fetchone()  # Use fetchone() to get a single row
 
+        conn.close()
+
+        user = User(user_data[1], user_data[2], 0, 'tmp',
+                    'tmp', int(weight), int(height), int(user_data[8]))
+        ski_preference = SkiPreference(user, int(stiffness), int(width))
+        recommendation_engine = Engine()
+        skis = recommendation_engine.generate_recommendation(
+            user, ski_preference, 10)
+
+        #xd = str(skis)
+    
+        return render(request, "authentification/lease.html", {'skis': skis, 'weight': weight, 'height': height, 'stiffness': stiffness, 'width': width})
     # Render the form page if it's a GET request
-    return render(request, "authentification/lease.html", {'weight': weight, 'height': height, 'stiffness': stiffness, 'width': width})
+    return render(request, "authentification/lease.html")
+
+def rent_ski(request):
+    if request.method == "POST":
+        user_id=request.POST['user_id']
+        ski_id=request.POST['ski_id']
+
+    # lease the skis 
+    recommendation_engine = Engine()
+    recommendation_engine.select_ski(user_id, ski_id)
