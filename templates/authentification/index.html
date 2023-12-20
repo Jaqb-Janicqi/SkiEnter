@@ -23,21 +23,10 @@
 
         <h3>Welcome to SkiEnter!</h3>
 
-        {% if user.is_authenticated %}
-        <h3>Hello {{ fname }}</h3>
-        <h4>You are successfully logged in</h4>
-        <!--retrieve data from the database about the user, so he can see
-        his data fo furthe updating-->
-
-    
-        <button type="submit"><a href="/signout">Sign Out</a></button>
-        <button type="submit">Edit/Update profile</button>
-        <!-- <button type="submit"><a href="/update">Edit/Update profile</a></button> -->
-        {% else %}
 
         <button type="submit"><a href="/signup">SignUp</a></button>
         <button type="submit"><a href="/signin">SignIn</a></button> 
-        {% endif %}
+
 
         <script src="" async defer></script>
     </body>
