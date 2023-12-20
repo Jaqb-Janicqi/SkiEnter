@@ -23,12 +23,16 @@ headerlabel.grid(row=0, column=1, padx=20)
 # Content Frame
 frame_content = ttk.Frame(root)
 frame_content.pack()
+listbox = Listbox(root, width=50, height=20)
+listbox.pack(side=LEFT, fill=BOTH)
+scrollbar = Scrollbar(root)
+scrollbar.pack(side=RIGHT, fill=BOTH)
+
+user_id = 1
 
 # Fetch skis from the Skis table in the database
-cursor.execute("SELECT ski_number, name, manufacturer, proficiency, stiffness, Length, Width FROM Skis")
+cursor.execute(f"SELECT user_id, ski_number, name, manufacturer, proficiency, stiffness, Length, Width FROM Skis JOIN Rentals ON Skis.ski_number = Rentals.item_id WHERE Rentals.user_id = {user_id}")
 skis_from_database = cursor.fetchall()
-cursor.execute("SELECT profile_id FROM preference_on")
-profile_id = cursor.fetchone()[0]
 
 
 # Sample list of available skis
@@ -36,38 +40,58 @@ available_skis = [{"ski_number": ski[0], "name": ski[1], "manufacturer": ski[2],
                    "proficiency": ski[3], "stiffness": ski[4], "Length": ski[5],
                    "Width": ski[6]} for ski in skis_from_database]
 
+var = Variable(value = skis_from_database)
+listbox = Listbox(root, listvariable = var, height = 6, selectmode=SINGLE)
+
+for ski in available_skis: 
+        listbox.insert(END, {ski['name']} - {ski['manufacturer']} - {ski['proficiency']} - {ski['stiffness']} - {ski['Length']} - {ski['Width']})
+
+
+def items_selected(event):
+    """Handle item selected event from listbox"""
+    # Get selected items indices
+    selected_indices = listbox.curselection()
+
+    # Get selected items
+    selected_items = [listbox.get(i) for i in selected_indices]
+
+    # Show selected items in messagebox
+    messagebox.showinfo(title='Selected Items', message=selected_items)
+
+listbox.bind('<<ListboxSelect>>', items_selected)
+
 # Variables for selected attributes
-selected_name_var = StringVar()
-selected_manufacturer_var = StringVar()
-selected_proficiency_var = StringVar()
-selected_stiffness_var = StringVar()
-selected_length_var = StringVar()
-selected_width_var = StringVar()
+# selected_name_var = StringVar()
+# selected_manufacturer_var = StringVar()
+# selected_proficiency_var = StringVar()
+# selected_stiffness_var = StringVar()
+# selected_length_var = StringVar()
+# selected_width_var = StringVar()
 
 # Labels for each attribute
-attributes_labels = ["Select a Name:", "Select a Manufacturer:", "Select Proficiency:",
-                     "Select Stiffness:", "Select Length:", "Select Width:"]
-for i, label_text in enumerate(attributes_labels):
-    ttk.Label(frame_content, text=label_text).grid(row=i, column=0, padx=10, pady=10)
+# attributes_labels = ["Select a Name:", "Select a Manufacturer:", "Select Proficiency:",
+#                      "Select Stiffness:", "Select Length:", "Select Width:"]
+# for i, label_text in enumerate(attributes_labels):
+#     ttk.Label(frame_content, text=label_text).grid(row=i, column=0, padx=10, pady=10)
 
 # Comboboxes for each attribute
-ski_combobox = ttk.Combobox(frame_content, textvariable=selected_name_var, values=[ski["name"] for ski in available_skis])
-ski_combobox.grid(row=0, column=1, padx=10, pady=10)
+# ski_combobox = ttk.Combobox(frame_content, textvariable=selected_name_var, values=[ski["name"] for ski in available_skis])
+# ski_combobox.grid(row=0, column=1, padx=10, pady=10)
 
-manufacturer_combobox = ttk.Combobox(frame_content, textvariable=selected_manufacturer_var, values=list(set(ski["manufacturer"] for ski in available_skis)))
-manufacturer_combobox.grid(row=1, column=1, padx=10, pady=10)
+# manufacturer_combobox = ttk.Combobox(frame_content, textvariable=selected_manufacturer_var, values=list(set(ski["manufacturer"] for ski in available_skis)))
+# manufacturer_combobox.grid(row=1, column=1, padx=10, pady=10)
 
-proficiency_combobox = ttk.Combobox(frame_content, textvariable=selected_proficiency_var, values=list(set(ski["proficiency"] for ski in available_skis)))
-proficiency_combobox.grid(row=2, column=1, padx=10, pady=10)
+# proficiency_combobox = ttk.Combobox(frame_content, textvariable=selected_proficiency_var, values=list(set(ski["proficiency"] for ski in available_skis)))
+# proficiency_combobox.grid(row=2, column=1, padx=10, pady=10)
 
-stiffness_combobox = ttk.Combobox(frame_content, textvariable=selected_stiffness_var, values=list(set(ski["stiffness"] for ski in available_skis)))
-stiffness_combobox.grid(row=3, column=1, padx=10, pady=10)
+# stiffness_combobox = ttk.Combobox(frame_content, textvariable=selected_stiffness_var, values=list(set(ski["stiffness"] for ski in available_skis)))
+# stiffness_combobox.grid(row=3, column=1, padx=10, pady=10)
 
-length_combobox = ttk.Combobox(frame_content, textvariable=selected_length_var, values=list(set(ski["Length"] for ski in available_skis)))
-length_combobox.grid(row=4, column=1, padx=10, pady=10)
+# length_combobox = ttk.Combobox(frame_content, textvariable=selected_length_var, values=list(set(ski["Length"] for ski in available_skis)))
+# length_combobox.grid(row=4, column=1, padx=10, pady=10)
 
-width_combobox = ttk.Combobox(frame_content, textvariable=selected_width_var, values=list(set(ski["Width"] for ski in available_skis)))
-width_combobox.grid(row=5, column=1, padx=10, pady=10)
+# width_combobox = ttk.Combobox(frame_content, textvariable=selected_width_var, values=list(set(ski["Width"] for ski in available_skis)))
+# width_combobox.grid(row=5, column=1, padx=10, pady=10)
 
 def save_to_favorites():
     selected_ski_name = selected_name_var.get()
@@ -90,7 +114,7 @@ def save_to_favorites():
             selected_ski_id = selected_ski["ski_number"]
 
             # Insert the selected ski into the preference_on table
-            cursor.execute("INSERT INTO preference_on(profile_id, ski_id) VALUES(?, ?)", (profile_id, selected_ski_id))
+            cursor.execute("INSERT INTO preference_on(profile_id, ski_id) VALUES(?, ?)", (user_id, selected_ski_id))
             db.commit()
             messagebox.showinfo(title='Save to Favorites', message='Ski saved to favorites')
         else:
@@ -102,7 +126,7 @@ def open_favorites():
         select *
         from skis
         join preference_on on preference_on.ski_id = skis.ski_number
-        where profile_id = {profile_id};
+        where profile_id = {user_id};
         """)
     favorite_skis = cursor.fetchall()
 
