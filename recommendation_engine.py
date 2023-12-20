@@ -178,7 +178,7 @@ class Engine():
             out_str += f"ski_number:{ski.ski_number}"
             print(out_str)
 
-    def select_ski(self, user: User, ski_item: Ski):
+    def select_ski(self, user_id, ski_id):
         """Selects a ski for the user to rent."""
 
         conn = sqlite3.connect('SkiEnter_database.db')
@@ -189,7 +189,7 @@ class Engine():
             SET is_available = 0
             WHERE ski_ID = ?;
             """,
-            (ski_item.ski_number,)
+            (ski_id)
         )
         conn.commit()
         c.execute(
@@ -197,7 +197,7 @@ class Engine():
             INSERT INTO Rentals (ski_ID, user_ID)
             VALUES (?, ?);
             """,
-            (ski_item.ski_number, user.id)
+            (ski_id, user_id)
         )
         conn.commit()
         conn.close()
