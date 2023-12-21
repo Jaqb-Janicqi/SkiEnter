@@ -33,6 +33,7 @@ def sample_skis():
     )
     conn.commit()
 
+
     # add all skis to the database
     for ski in skis:
         c.execute(
