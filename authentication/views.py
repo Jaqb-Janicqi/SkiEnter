@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
@@ -81,6 +82,8 @@ def signin(request):
 
 
 def signout(request):
+    os.system('python Feedback.py')
+
     logout(request)
     messages.success(request, "Logged out successgully")
     return redirect("home")
@@ -90,10 +93,13 @@ def success(request):
     return render(request, "authentification\success.html")
 
 
-def fav(request):
-    return redirect("fav")
+# def fav(request):
+#     return redirect("fav")
 
-
+def run_python():
+    
+    os.system('python Feedback.py')
+    
 def lease(request):
     if request.method == "POST":
         weight = request.POST['weight']
@@ -113,17 +119,19 @@ def lease(request):
             """, (request.session['user_fname'],)
         )
         user_data = cursor.fetchone()  # Use fetchone() to get a single row
-
+    
         conn.close()
-
+       
         user = User(user_data[1], user_data[2], 0, 'tmp',
                     'tmp', int(weight), int(height), int(user_data[8]))
         ski_preference = SkiPreference(user, int(stiffness), int(width))
         recommendation_engine = Engine()
         skis = recommendation_engine.generate_recommendation(
             user, ski_preference, 10)
-    
+
         return render(request, "authentification/lease.html", {'userID': user_data[0], 'skis': skis, 'weight': weight, 'height': height, 'stiffness': stiffness, 'width': width})
+ 
+    
     # Render the form page if it's a GET request
     return render(request, "authentification/lease.html")
 
@@ -136,3 +144,4 @@ def rent_ski(request):
     recommendation_engine = Engine()
     recommendation_engine.select_ski(user_id, ski_id)
     return render(request, "authentification/rent.html")
+
