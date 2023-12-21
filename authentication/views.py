@@ -122,8 +122,6 @@ def lease(request):
         recommendation_engine = Engine()
         skis = recommendation_engine.generate_recommendation(
             user, ski_preference, 10)
-
-        #xd = str(skis)
     
         return render(request, "authentification/lease.html", {'userID': user_data[0], 'skis': skis, 'weight': weight, 'height': height, 'stiffness': stiffness, 'width': width})
     # Render the form page if it's a GET request

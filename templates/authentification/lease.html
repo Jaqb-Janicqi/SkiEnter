@@ -32,7 +32,7 @@
                         <td>
                             <form action="/rent_ski" method="post">
                                 {% csrf_token %}
-                                <!-- IT DOESNOT SEND USER ID AND SKI ID WHY? -->
+                              
                                 <input type="hidden" id="userID" name="userID" value="{{ userID }}">
                                 <input type="hidden" name="chosen_ski_id" value="{{ ski.ski_number }}">
                                 <button type="submit">Choose</button>                               
