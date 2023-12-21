@@ -196,12 +196,12 @@ class Engine():
             SET is_available = 0
             WHERE ski_ID = ?;
             """,
-            (ski_id)
+            (ski_id,)
         )
         conn.commit()
         c.execute(
             """
-            INSERT INTO Rentals (ski_ID, user_ID)
+            INSERT INTO Rentals (item_ID, user_ID)
             VALUES (?, ?);
             """,
             (ski_id, user_id)

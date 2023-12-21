@@ -125,15 +125,16 @@ def lease(request):
 
         #xd = str(skis)
     
-        return render(request, "authentification/lease.html", {'skis': skis, 'weight': weight, 'height': height, 'stiffness': stiffness, 'width': width})
+        return render(request, "authentification/lease.html", {'userID': user_data[0], 'skis': skis, 'weight': weight, 'height': height, 'stiffness': stiffness, 'width': width})
     # Render the form page if it's a GET request
     return render(request, "authentification/lease.html")
 
 def rent_ski(request):
     if request.method == "POST":
-        user_id=request.POST['user_id']
-        ski_id=request.POST['ski_id']
+        user_id=request.POST['userID']
+        ski_id=request.POST['chosen_ski_id']
 
     # lease the skis 
     recommendation_engine = Engine()
     recommendation_engine.select_ski(user_id, ski_id)
+    return render(request, "authentification/rent.html")

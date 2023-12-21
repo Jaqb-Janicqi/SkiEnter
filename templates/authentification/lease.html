@@ -11,7 +11,7 @@
     </head>
     <body>
 
-
+        <h3>UserID: {{ userID }}</h3>
         <h3>Leased skiis for {{ weight }}, {{ height }}, {{ stiffness }}, {{ width }}</h3>
      
         <table>
@@ -26,20 +26,18 @@
             <tbody>
                 {% for ski in skis %}
                     <tr>
-                        <td>{{ ski.model }}</td>
+                        <td>{{ ski.name }}</td>
                         <td>{{ ski.stiffness }}</td>
                         <td>{{ ski.width }}</td>
                         <td>
                             <form action="/rent_ski" method="post">
                                 {% csrf_token %}
                                 <!-- IT DOESNOT SEND USER ID AND SKI ID WHY? -->
-                                <input type="hidden" name="chosen_ski_id" value="{{ ski.id }}">
-                                <button type="submit">Choose</button>
+                                <input type="hidden" id="userID" name="userID" value="{{ userID }}">
+                                <input type="hidden" name="chosen_ski_id" value="{{ ski.ski_number }}">
+                                <button type="submit">Choose</button>                               
+                                <br>
 
-                                {% csrf_token %}
-                                <input type="hidden" name="user_id" value="{{ user.id }}">
-                                <input type="hidden" name="ski_id" value="{{ ski.id }}">
-                                <button type="submit">Rent</button>
                             </form>
                         </td>
                     </tr>
